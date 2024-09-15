@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Development Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Code Development Assistant</h1>
+        
+        <div>
+            <label for="repoPath">Repository Path:</label>
+            <input type="text" id="repoPath" placeholder="Enter repository path">
+            <button id="getFileTree">Get File Tree</button>
+        </div>
+        
+        <div id="fileTree"></div>
+        
+        <div>
+            <label for="prompt">Enter your prompt:</label>
+            <textarea id="prompt" rows="4" placeholder="Describe the functionality you want to develop"></textarea>
+            <button id="generatePlan">Generate Plan</button>
+        </div>
+        
+        <div id="plan"></div>
+        
+        <button id="executePlan">Execute Plan</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
