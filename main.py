@@ -6,6 +6,7 @@ from utils.openai_integration import generate_plan, execute_plan
 from utils.git_operations import initialize_git_repo, git_add_all, git_commit, git_status
 import logging
 import tempfile
+import json
 
 app = Flask(__name__)
 
@@ -57,9 +58,9 @@ def generate_plan_route():
 
         file_tree = get_file_tree(app.config['UPLOAD_FOLDER'])
         logger.info(f"File tree for plan generation: {file_tree}")
-        plan = generate_plan(prompt, file_tree)
-        logger.info(f"Generated plan: {plan}")
-        return jsonify({'plan': plan}), 200
+        plan_json = generate_plan(prompt, file_tree)
+        logger.info(f"Generated plan: {plan_json}")
+        return jsonify(json.loads(plan_json)), 200
     except Exception as e:
         logger.error(f"Error generating plan: {e}")
         return jsonify({'error': f'An error occurred while generating the plan: {str(e)}'}), 500
@@ -72,8 +73,8 @@ def execute_plan_route():
         if not plan:
             return jsonify({'error': 'No plan provided'}), 400
 
-        result = execute_plan(plan, app.config['UPLOAD_FOLDER'])
-        return jsonify({'result': result})
+        result_json = execute_plan(json.dumps(plan), app.config['UPLOAD_FOLDER'])
+        return jsonify(json.loads(result_json))
     except Exception as e:
         logger.error(f"Error executing plan: {e}")
         return jsonify({'error': f'An error occurred while executing the plan: {str(e)}'}), 500

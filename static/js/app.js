@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Failed to generate plan');
 
             const data = await response.json();
-            planDisplay.textContent = data.plan;
+            displayPlan(data);
         } catch (error) {
             showError(error.message);
         } finally {
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     executePlanBtn.addEventListener('click', async () => {
-        const plan = planDisplay.textContent;
+        const plan = JSON.parse(planDisplay.textContent);
         if (!plan) {
             showError('Please generate a plan first.');
             return;
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Failed to execute plan');
 
             const data = await response.json();
-            resultDisplay.textContent = JSON.stringify(data.result, null, 2);
+            displayExecutionResult(data);
         } catch (error) {
             showError(error.message);
         }
@@ -214,5 +214,38 @@ document.addEventListener('DOMContentLoaded', () => {
         errorDiv.textContent = message;
         document.body.appendChild(errorDiv);
         setTimeout(() => errorDiv.remove(), 5000);
+    }
+
+    function displayPlan(plan) {
+        planDisplay.innerHTML = '';
+        const planList = document.createElement('ol');
+        plan.steps.forEach(step => {
+            const listItem = document.createElement('li');
+            listItem.textContent = step.description;
+            const filesList = document.createElement('ul');
+            step.files.forEach(file => {
+                const fileItem = document.createElement('li');
+                fileItem.textContent = file;
+                filesList.appendChild(fileItem);
+            });
+            listItem.appendChild(filesList);
+            planList.appendChild(listItem);
+        });
+        planDisplay.appendChild(planList);
+        planDisplay.dataset.rawPlan = JSON.stringify(plan);
+    }
+
+    function displayExecutionResult(result) {
+        resultDisplay.innerHTML = '';
+        const resultList = document.createElement('ol');
+        result.steps.forEach(step => {
+            const listItem = document.createElement('li');
+            listItem.textContent = step.description;
+            const pre = document.createElement('pre');
+            pre.textContent = step.content;
+            listItem.appendChild(pre);
+            resultList.appendChild(listItem);
+        });
+        resultDisplay.appendChild(resultList);
     }
 });
