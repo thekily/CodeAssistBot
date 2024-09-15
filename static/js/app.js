@@ -7,6 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const planDisplay = document.getElementById('plan');
     const executePlanBtn = document.getElementById('executePlan');
     const resultDisplay = document.getElementById('result');
+    
+    // New Git-related elements
+    const initRepoBtn = document.getElementById('initRepo');
+    const repoStatusBtn = document.getElementById('repoStatus');
+    const stageChangesBtn = document.getElementById('stageChanges');
+    const commitChangesBtn = document.getElementById('commitChanges');
+    const commitMessageInput = document.getElementById('commitMessage');
+    const commitHistoryBtn = document.getElementById('commitHistory');
+    const gitOperationsDisplay = document.getElementById('gitOperations');
 
     getFileTreeBtn.addEventListener('click', async () => {
         const repoPath = repoPathInput.value;
@@ -74,6 +83,123 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
             resultDisplay.textContent = JSON.stringify(data.result, null, 2);
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+
+    // New Git-related event listeners
+    initRepoBtn.addEventListener('click', async () => {
+        const repoPath = repoPathInput.value;
+        if (!repoPath) {
+            showError('Please enter a repository path.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/init_repo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ repoPath })
+            });
+
+            if (!response.ok) throw new Error('Failed to initialize repository');
+
+            const data = await response.json();
+            gitOperationsDisplay.textContent = data.result;
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+
+    repoStatusBtn.addEventListener('click', async () => {
+        const repoPath = repoPathInput.value;
+        if (!repoPath) {
+            showError('Please enter a repository path.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/repo_status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ repoPath })
+            });
+
+            if (!response.ok) throw new Error('Failed to get repository status');
+
+            const data = await response.json();
+            gitOperationsDisplay.textContent = data.status;
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+
+    stageChangesBtn.addEventListener('click', async () => {
+        const repoPath = repoPathInput.value;
+        if (!repoPath) {
+            showError('Please enter a repository path.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/stage_changes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ repoPath })
+            });
+
+            if (!response.ok) throw new Error('Failed to stage changes');
+
+            const data = await response.json();
+            gitOperationsDisplay.textContent = data.result;
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+
+    commitChangesBtn.addEventListener('click', async () => {
+        const repoPath = repoPathInput.value;
+        const message = commitMessageInput.value;
+        if (!repoPath || !message) {
+            showError('Please enter both repository path and commit message.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/commit_changes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ repoPath, message })
+            });
+
+            if (!response.ok) throw new Error('Failed to commit changes');
+
+            const data = await response.json();
+            gitOperationsDisplay.textContent = data.result;
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+
+    commitHistoryBtn.addEventListener('click', async () => {
+        const repoPath = repoPathInput.value;
+        if (!repoPath) {
+            showError('Please enter a repository path.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/commit_history', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ repoPath })
+            });
+
+            if (!response.ok) throw new Error('Failed to get commit history');
+
+            const data = await response.json();
+            gitOperationsDisplay.textContent = JSON.stringify(data.history, null, 2);
         } catch (error) {
             showError(error.message);
         }

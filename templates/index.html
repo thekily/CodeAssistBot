@@ -29,6 +29,22 @@
         <button id="executePlan">Execute Plan</button>
         
         <div id="result"></div>
+
+        <!-- New Git-related elements -->
+        <h2>Git Operations</h2>
+        <div>
+            <button id="initRepo">Initialize Repository</button>
+            <button id="repoStatus">Repository Status</button>
+            <button id="stageChanges">Stage Changes</button>
+        </div>
+        <div>
+            <input type="text" id="commitMessage" placeholder="Enter commit message">
+            <button id="commitChanges">Commit Changes</button>
+        </div>
+        <div>
+            <button id="commitHistory">Commit History</button>
+        </div>
+        <div id="gitOperations"></div>
     </div>
 
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
