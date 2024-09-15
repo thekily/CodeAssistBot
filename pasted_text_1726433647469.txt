@@ -1,0 +1,51 @@
+**Detailed Prompt for the Programming Chatbot:**
+
+Develop an application that assists the user in code development by integrating with their local work repository. The application should meet the following specifications:
+
+1. **Permission Request:**
+   - Upon startup, the application must request and obtain explicit permission from the user to access the hard drive content, specifically the folder containing the code repository.
+
+2. **Repository Integration:**
+   - The application should be able to read and analyze the file and folder structure (filetree) of the repository.
+   - It must be able to access the content of the files when necessary for the process.
+
+3. **Prompt Input Interface:**
+   - Provide an interface where the user can enter a prompt describing a functionality or feature they wish to develop within the repository.
+
+4. **Action Plan Generation:**
+   - Use the OpenAI API to send the user's prompt to a chatbot with programming capabilities.
+   - The chatbot should analyze the prompt and generate a detailed plan of steps to implement the requested functionality.
+
+5. **Plan Validation and Modification:**
+   - Present the generated plan to the user for review.
+   - Allow the user to validate, modify, or refine each step of the plan as they see fit.
+
+6. **Plan Execution:**
+   - Once validated, send the plan back to the chatbot for execution.
+   - For each step of the plan, the chatbot should:
+     - Specify exactly which files in the repository need to be created or modified.
+     - Provide the necessary code or modifications for each file.
+
+7. **Applying Changes to the Repository:**
+   - The application should manage incorporating the code changes into the repository.
+   - Ensure that modifications do not overwrite unsaved work and maintain a history of changes.
+
+8. **Security and Privacy:**
+   - Ensure that all file operations are secure and respect the user's data privacy.
+   - Request confirmation before making changes that affect the repository.
+
+9. **User Assistance:**
+   - Offer explanations or justifications for each step of the plan when requested by the user.
+   - Allow the user to ask follow-up questions or request additional modifications.
+
+10. **Error Handling:**
+    - Implement robust error handling to address issues such as missing files, permission errors, or code conflicts.
+
+11. **Technical Requirements:**
+    - Develop the application using [specify preferred programming languages].
+    - Ensure compatibility with [specify target operating systems].
+    - Integrate the OpenAI API following all usage policies and guidelines.
+
+**Final Objective:**
+
+Create an intuitive and efficient tool that enhances the user's workflow in code development. The application should leverage artificial intelligence capabilities to plan and implement code changes within the user's repository, always keeping control and data security in the user's hands.
