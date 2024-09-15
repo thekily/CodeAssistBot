@@ -46,6 +46,21 @@ def upload_files():
         logger.error(f"Error uploading files: {e}")
         return jsonify({'error': f'An error occurred while uploading files: {str(e)}'}), 500
 
+@app.route('/generate_plan', methods=['POST'])
+def generate_plan_route():
+    try:
+        data = request.json
+        prompt = data.get('prompt')
+        if not prompt:
+            return jsonify({'error': 'No prompt provided'}), 400
+
+        file_tree = get_file_tree(app.config['UPLOAD_FOLDER'])
+        plan = generate_plan(prompt, file_tree)
+        return jsonify({'plan': plan})
+    except Exception as e:
+        logger.error(f"Error generating plan: {e}")
+        return jsonify({'error': f'An error occurred while generating the plan: {str(e)}'}), 500
+
 # ... (rest of the code remains unchanged)
 
 if __name__ == '__main__':
