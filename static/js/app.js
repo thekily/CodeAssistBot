@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const repoPathInput = document.getElementById('repoPath');
-    const getFileTreeBtn = document.getElementById('getFileTree');
+    const fileUploadInput = document.getElementById('fileUpload');
+    const uploadFilesBtn = document.getElementById('uploadFiles');
     const fileTreeDisplay = document.getElementById('fileTree');
     const promptInput = document.getElementById('prompt');
     const generatePlanBtn = document.getElementById('generatePlan');
@@ -8,21 +8,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const executePlanBtn = document.getElementById('executePlan');
     const resultDisplay = document.getElementById('result');
 
-    getFileTreeBtn.addEventListener('click', async () => {
-        const repoPath = repoPathInput.value;
-        if (!repoPath) {
-            showError('Please enter a repository path.');
-            return;
+    const gitInitBtn = document.getElementById('gitInit');
+    const gitAddBtn = document.getElementById('gitAdd');
+    const gitCommitBtn = document.getElementById('gitCommit');
+    const commitMessageInput = document.getElementById('commitMessage');
+    const gitStatusBtn = document.getElementById('gitStatus');
+    const gitResultDisplay = document.getElementById('gitResult');
+
+    uploadFilesBtn.addEventListener('click', async () => {
+        const formData = new FormData();
+        for (const file of fileUploadInput.files) {
+            formData.append('files', file);
         }
 
         try {
-            const response = await fetch('/get_file_tree', {
+            const response = await fetch('/upload_files', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ repoPath })
+                body: formData
             });
 
-            if (!response.ok) throw new Error('Failed to get file tree');
+            if (!response.ok) throw new Error('Failed to upload files');
 
             const data = await response.json();
             fileTreeDisplay.textContent = JSON.stringify(data.fileTree, null, 2);
@@ -32,10 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     generatePlanBtn.addEventListener('click', async () => {
-        const repoPath = repoPathInput.value;
         const prompt = promptInput.value;
-        if (!repoPath || !prompt) {
-            showError('Please enter both repository path and prompt.');
+        if (!prompt) {
+            showError('Please enter a prompt.');
             return;
         }
 
@@ -43,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/generate_plan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ repoPath, prompt })
+                body: JSON.stringify({ prompt })
             });
 
             if (!response.ok) throw new Error('Failed to generate plan');
@@ -56,9 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     executePlanBtn.addEventListener('click', async () => {
-        const repoPath = repoPathInput.value;
         const plan = planDisplay.textContent;
-        if (!repoPath || !plan) {
+        if (!plan) {
             showError('Please generate a plan first.');
             return;
         }
@@ -67,13 +70,67 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/execute_plan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ repoPath, plan })
+                body: JSON.stringify({ plan })
             });
 
             if (!response.ok) throw new Error('Failed to execute plan');
 
             const data = await response.json();
             resultDisplay.textContent = JSON.stringify(data.result, null, 2);
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+
+    gitInitBtn.addEventListener('click', async () => {
+        try {
+            const response = await fetch('/git_init', { method: 'POST' });
+            if (!response.ok) throw new Error('Failed to initialize Git repository');
+            const data = await response.json();
+            gitResultDisplay.textContent = data.result;
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+
+    gitAddBtn.addEventListener('click', async () => {
+        try {
+            const response = await fetch('/git_add', { method: 'POST' });
+            if (!response.ok) throw new Error('Failed to stage changes');
+            const data = await response.json();
+            gitResultDisplay.textContent = data.result;
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+
+    gitCommitBtn.addEventListener('click', async () => {
+        const message = commitMessageInput.value;
+        if (!message) {
+            showError('Please enter a commit message.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/git_commit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message })
+            });
+            if (!response.ok) throw new Error('Failed to commit changes');
+            const data = await response.json();
+            gitResultDisplay.textContent = data.result;
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+
+    gitStatusBtn.addEventListener('click', async () => {
+        try {
+            const response = await fetch('/git_status', { method: 'POST' });
+            if (!response.ok) throw new Error('Failed to get Git status');
+            const data = await response.json();
+            gitResultDisplay.textContent = data.result;
         } catch (error) {
             showError(error.message);
         }

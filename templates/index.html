@@ -11,9 +11,9 @@
         <h1>Code Development Assistant</h1>
         
         <div>
-            <label for="repoPath">Repository Path:</label>
-            <input type="text" id="repoPath" placeholder="Enter repository path">
-            <button id="getFileTree">Get File Tree</button>
+            <label for="fileUpload">Upload Repository Files:</label>
+            <input type="file" id="fileUpload" multiple>
+            <button id="uploadFiles">Upload Files</button>
         </div>
         
         <div id="fileTree"></div>
@@ -29,6 +29,17 @@
         <button id="executePlan">Execute Plan</button>
         
         <div id="result"></div>
+
+        <div class="git-operations">
+            <h2>Git Operations</h2>
+            <button id="gitInit">Initialize Git Repository</button>
+            <button id="gitAdd">Stage All Changes</button>
+            <button id="gitCommit">Commit Changes</button>
+            <input type="text" id="commitMessage" placeholder="Enter commit message">
+            <button id="gitStatus">Get Git Status</button>
+        </div>
+
+        <div id="gitResult"></div>
     </div>
 
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
