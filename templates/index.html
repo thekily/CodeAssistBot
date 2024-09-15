@@ -11,9 +11,12 @@
         <h1>Code Development Assistant</h1>
         
         <div>
-            <label for="fileUpload">Upload Repository Files:</label>
-            <input type="file" id="fileUpload" multiple>
+            <label for="fileUpload">Upload Repository Files or Directory:</label>
+            <input type="file" id="fileUpload" multiple webkitdirectory directory>
             <button id="uploadFiles">Upload Files</button>
+            <div id="uploadProgress" class="progress-bar" style="display: none;">
+                <div class="progress"></div>
+            </div>
         </div>
         
         <div id="fileTree"></div>

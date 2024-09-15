@@ -15,24 +15,90 @@ document.addEventListener('DOMContentLoaded', () => {
     const gitStatusBtn = document.getElementById('gitStatus');
     const gitResultDisplay = document.getElementById('gitResult');
 
+    const uploadProgressBar = document.getElementById('uploadProgress');
+    const progressBarFill = uploadProgressBar.querySelector('.progress');
+
     uploadFilesBtn.addEventListener('click', async () => {
         const formData = new FormData();
-        for (const file of fileUploadInput.files) {
-            formData.append('files', file);
+        const files = fileUploadInput.files;
+
+        if (files.length === 0) {
+            showError('Please select files or a directory to upload.');
+            return;
+        }
+
+        for (const file of files) {
+            const relativePath = file.webkitRelativePath || file.name;
+            formData.append('files', file, relativePath);
         }
 
         try {
+            uploadProgressBar.style.display = 'block';
+            progressBarFill.style.width = '0%';
+
             const response = await fetch('/upload_files', {
                 method: 'POST',
                 body: formData
             });
 
-            if (!response.ok) throw new Error('Failed to upload files');
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to upload files');
+            }
 
-            const data = await response.json();
-            fileTreeDisplay.textContent = JSON.stringify(data.fileTree, null, 2);
+            const reader = response.body.getReader();
+            const contentLength = +response.headers.get('Content-Length');
+
+            let receivedLength = 0;
+            let chunks = [];
+            while(true) {
+                const {done, value} = await reader.read();
+
+                if (done) {
+                    break;
+                }
+
+                chunks.push(value);
+                receivedLength += value.length;
+                const progress = Math.round((receivedLength / contentLength) * 100);
+                progressBarFill.style.width = `${progress}%`;
+            }
+
+            const chunksAll = new Uint8Array(receivedLength);
+            let position = 0;
+            for(let chunk of chunks) {
+                chunksAll.set(chunk, position);
+                position += chunk.length;
+            }
+
+            const result = new TextDecoder("utf-8").decode(chunksAll);
+            
+            try {
+                const data = JSON.parse(result);
+                console.log('Parsed response:', data);
+                console.log('File tree type:', typeof data.fileTree);
+                console.log('File tree content:', data.fileTree);
+
+                if (data.fileTree) {
+                    if (typeof data.fileTree === 'object') {
+                        fileTreeDisplay.textContent = JSON.stringify(data.fileTree, null, 2);
+                    } else {
+                        fileTreeDisplay.textContent = data.fileTree;
+                    }
+                    console.log('File tree display updated');
+                } else {
+                    console.error('File tree not found in the response');
+                    fileTreeDisplay.textContent = 'Error: File tree not found in the response';
+                }
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+                showError('Error parsing server response');
+            }
         } catch (error) {
+            console.error('Error uploading files:', error);
             showError(error.message);
+        } finally {
+            uploadProgressBar.style.display = 'none';
         }
     });
 
