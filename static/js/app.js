@@ -110,6 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
+            generatePlanBtn.classList.add('loading');
+            generatePlanBtn.disabled = true;
+
             const response = await fetch('/generate_plan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -122,6 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
             planDisplay.textContent = data.plan;
         } catch (error) {
             showError(error.message);
+        } finally {
+            generatePlanBtn.classList.remove('loading');
+            generatePlanBtn.disabled = false;
         }
     });
 

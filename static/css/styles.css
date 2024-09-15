@@ -26,10 +26,16 @@ button {
     border: none;
     padding: 10px 20px;
     cursor: pointer;
+    position: relative;
 }
 
 button:hover {
     background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
 
 #fileTree, #plan, #result {
@@ -58,4 +64,24 @@ button:hover {
     background-color: #007bff;
     border-radius: 3px;
     transition: width 0.5s ease-in-out;
+}
+
+.loader {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top: 2px solid #007bff;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+button.loading .loader {
+    display: inline-block;
 }

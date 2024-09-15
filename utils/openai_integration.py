@@ -12,7 +12,7 @@ def generate_plan(prompt, file_tree):
         request = context + "Based on the repository structure and the user's prompt, generate a detailed plan of steps to implement the requested functionality. Each step should specify which files need to be created or modified and provide a high-level description of the changes."
         
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o-mini",
             messages=[{"role": "user", "content": request}],
             max_tokens=500
         )
